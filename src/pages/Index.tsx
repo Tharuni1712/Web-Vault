@@ -3,7 +3,6 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Shield, Lock, Key, Check, Eye } from 'lucide-react';
-import PasswordVault from '@/components/PasswordVault';
 import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger, navigationMenuTriggerStyle } from '@/components/ui/navigation-menu';
 import { Link } from 'react-router-dom';
 
@@ -19,44 +18,60 @@ const HomePage = () => (
         <NavigationMenu>
           <NavigationMenuList>
             <NavigationMenuItem>
-              <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                How It Works
-              </NavigationMenuLink>
+              <Link to="/how-it-works">
+                <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                  How It Works
+                </NavigationMenuLink>
+              </Link>
             </NavigationMenuItem>
             <NavigationMenuItem>
-              <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                Features
-              </NavigationMenuLink>
+              <Link to="/features">
+                <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                  Features
+                </NavigationMenuLink>
+              </Link>
             </NavigationMenuItem>
             <NavigationMenuItem>
               <NavigationMenuTrigger>Resources</NavigationMenuTrigger>
               <NavigationMenuContent>
                 <div className="w-[400px] p-4">
                   <div className="grid grid-cols-2 gap-3">
-                    <Card>
-                      <CardContent className="p-4 flex gap-2">
-                        <Lock className="h-5 w-5 text-blue-500" />
-                        <div>
-                          <h3 className="font-medium">Security Guide</h3>
-                          <p className="text-sm text-gray-500">Password best practices</p>
-                        </div>
-                      </CardContent>
-                    </Card>
-                    <Card>
-                      <CardContent className="p-4 flex gap-2">
-                        <Key className="h-5 w-5 text-blue-500" />
-                        <div>
-                          <h3 className="font-medium">FAQ</h3>
-                          <p className="text-sm text-gray-500">Common questions</p>
-                        </div>
-                      </CardContent>
-                    </Card>
+                    <Link to="/resources">
+                      <Card>
+                        <CardContent className="p-4 flex gap-2">
+                          <Lock className="h-5 w-5 text-blue-500" />
+                          <div>
+                            <h3 className="font-medium">Security Guide</h3>
+                            <p className="text-sm text-gray-500">Password best practices</p>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </Link>
+                    <Link to="/resources">
+                      <Card>
+                        <CardContent className="p-4 flex gap-2">
+                          <Key className="h-5 w-5 text-blue-500" />
+                          <div>
+                            <h3 className="font-medium">FAQ</h3>
+                            <p className="text-sm text-gray-500">Common questions</p>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </Link>
                   </div>
                 </div>
               </NavigationMenuContent>
             </NavigationMenuItem>
           </NavigationMenuList>
         </NavigationMenu>
+        <div className="flex items-center gap-4">
+          <Link to="/login">
+            <Button variant="outline">Sign In</Button>
+          </Link>
+          <Link to="/signup">
+            <Button>Sign Up</Button>
+          </Link>
+        </div>
       </div>
     </header>
 
@@ -71,9 +86,11 @@ const HomePage = () => (
             Never forget a login again with SecurePass.
           </p>
           <div className="pt-4">
-            <Button size="lg" className="bg-blue-600 hover:bg-blue-700">
-              <Lock className="mr-2 h-5 w-5" /> Get Started
-            </Button>
+            <Link to="/signup">
+              <Button size="lg" className="bg-blue-600 hover:bg-blue-700">
+                <Lock className="mr-2 h-5 w-5" /> Get Started
+              </Button>
+            </Link>
           </div>
           <div className="flex items-center space-x-6 pt-4 text-gray-700">
             <div className="flex items-center">
