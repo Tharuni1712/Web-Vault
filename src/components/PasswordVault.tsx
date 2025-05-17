@@ -1,18 +1,15 @@
 
 import React, { useEffect, useState } from 'react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import SearchBar from './SearchBar';
 import PasswordEntry from './PasswordEntry';
 import AddPasswordForm, { PasswordEntry as PasswordEntryType } from './AddPasswordForm';
-import PasswordGenerator from './PasswordGenerator';
 import { useToast } from '@/components/ui/use-toast';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Lock } from 'lucide-react';
 
 const PasswordVault: React.FC = () => {
   const [passwords, setPasswords] = useState<PasswordEntryType[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const [activeTab, setActiveTab] = useState('passwords');
   const { toast } = useToast();
   
   // Load passwords from localStorage on initial render
@@ -74,73 +71,63 @@ const PasswordVault: React.FC = () => {
   
   return (
     <div className="w-full max-w-4xl mx-auto">
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <div className="flex flex-col md:flex-row md:items-center justify-between mb-6">
-          <div className="flex items-center mb-4 md:mb-0">
-            <Lock className="h-6 w-6 mr-2 text-blue-600" />
-            <h1 className="text-2xl font-bold">Password Vault</h1>
+      <div className="flex flex-col md:flex-row md:items-center justify-between mb-6">
+        <div className="flex items-center mb-4 md:mb-0">
+          <Lock className="h-6 w-6 mr-2 text-blue-600" />
+          <h1 className="text-2xl font-bold">Password Vault</h1>
+        </div>
+      </div>
+
+      <div className="space-y-4">
+        <div className="flex flex-col md:flex-row gap-4">
+          <div className="w-full md:w-3/4">
+            <SearchBar 
+              query={searchQuery}
+              setQuery={setSearchQuery}
+              placeholder="Search website, username, or notes..."
+            />
           </div>
-          <TabsList>
-            <TabsTrigger value="passwords">Passwords</TabsTrigger>
-            <TabsTrigger value="generator">Generator</TabsTrigger>
-          </TabsList>
+          <div className="w-full md:w-1/4">
+            <AddPasswordForm onAdd={handleAddPassword} />
+          </div>
         </div>
 
-        <TabsContent value="passwords" className="space-y-4">
-          <div className="flex flex-col md:flex-row gap-4">
-            <div className="w-full md:w-3/4">
-              <SearchBar 
-                query={searchQuery}
-                setQuery={setSearchQuery}
-                placeholder="Search website, username, or notes..."
+        <div className="mt-6">
+          {filteredPasswords.length > 0 ? (
+            filteredPasswords.map((entry) => (
+              <PasswordEntry
+                key={entry.id}
+                entry={entry}
+                onDelete={handleDeletePassword}
+                onUpdate={handleUpdatePassword}
               />
-            </div>
-            <div className="w-full md:w-1/4">
-              <AddPasswordForm onAdd={handleAddPassword} />
-            </div>
-          </div>
-
-          <div className="mt-6">
-            {filteredPasswords.length > 0 ? (
-              filteredPasswords.map((entry) => (
-                <PasswordEntry
-                  key={entry.id}
-                  entry={entry}
-                  onDelete={handleDeletePassword}
-                  onUpdate={handleUpdatePassword}
-                />
-              ))
-            ) : (
-              <Card className="text-center py-12">
-                <CardContent>
-                  <div className="flex justify-center mb-4">
-                    <Lock className="h-12 w-12 text-gray-300" />
-                  </div>
-                  {searchQuery ? (
-                    <>
-                      <h3 className="text-lg font-medium">No matching passwords found</h3>
-                      <p className="text-sm text-gray-500 mt-1">
-                        Try adjusting your search terms
-                      </p>
-                    </>
-                  ) : (
-                    <>
-                      <h3 className="text-lg font-medium">No passwords yet</h3>
-                      <p className="text-sm text-gray-500 mt-1">
-                        Add your first password to get started
-                      </p>
-                    </>
-                  )}
-                </CardContent>
-              </Card>
-            )}
-          </div>
-        </TabsContent>
-
-        <TabsContent value="generator">
-          <PasswordGenerator />
-        </TabsContent>
-      </Tabs>
+            ))
+          ) : (
+            <Card className="text-center py-12">
+              <CardContent>
+                <div className="flex justify-center mb-4">
+                  <Lock className="h-12 w-12 text-gray-300" />
+                </div>
+                {searchQuery ? (
+                  <>
+                    <h3 className="text-lg font-medium">No matching passwords found</h3>
+                    <p className="text-sm text-gray-500 mt-1">
+                      Try adjusting your search terms
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <h3 className="text-lg font-medium">No passwords yet</h3>
+                    <p className="text-sm text-gray-500 mt-1">
+                      Add your first password to get started
+                    </p>
+                  </>
+                )}
+              </CardContent>
+            </Card>
+          )}
+        </div>
+      </div>
     </div>
   );
 };
