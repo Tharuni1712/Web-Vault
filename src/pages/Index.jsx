@@ -134,7 +134,7 @@ const HomePage = () => (
               </div>
               <h3 className="text-xl font-semibold mb-2">Easy Access</h3>
               <p className="text-gray-600">
-                Find and use your passwords in just a few clicks with smart search
+                Access your passwords from any device, anywhere in the world
               </p>
             </CardContent>
           </Card>
@@ -145,7 +145,7 @@ const HomePage = () => (
               </div>
               <h3 className="text-xl font-semibold mb-2">Auto-Fill</h3>
               <p className="text-gray-600">
-                Quickly copy passwords and fill forms with a single click
+                Automatically fill in your login details with one click
               </p>
             </CardContent>
           </Card>
@@ -153,29 +153,17 @@ const HomePage = () => (
       </div>
 
       {/* CTA Section */}
-      <div className="mt-8 p-8 md:p-12 bg-blue-600 rounded-xl shadow-lg text-white">
-        <div className="text-center">
-          <h2 className="text-2xl md:text-3xl font-bold mb-4">Ready to secure all your passwords?</h2>
-          <p className="text-blue-100 max-w-xl mx-auto mb-6">
-            Join thousands of users who trust SecurePass to keep their online accounts safe.
-          </p>
-          <Link to="/vault">
-            <Button size="lg" variant="outline" className="bg-white text-blue-600 hover:bg-blue-50 border-white">
-              Access Your Password Vault
-            </Button>
-          </Link>
-        </div>
+      <div className="text-center py-16">
+        <h2 className="text-3xl font-bold text-gray-900 mb-4">Ready to secure your passwords?</h2>
+        <p className="text-lg text-gray-600 mb-8">Join thousands of users who trust SecurePass</p>
+        <Link to="/vault">
+          <Button size="lg" className="bg-blue-600 hover:bg-blue-700">
+            Try Password Vault
+          </Button>
+        </Link>
       </div>
     </div>
   </div>
 );
 
-const Index = () => {
-  return (
-    <div>
-      <HomePage />
-    </div>
-  );
-};
-
-export default Index;
+export default HomePage;

@@ -3,13 +3,7 @@ import React from 'react';
 import { Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 
-interface SearchBarProps {
-  query: string;
-  setQuery: (query: string) => void;
-  placeholder?: string;
-}
-
-const SearchBar: React.FC<SearchBarProps> = ({ 
+const SearchBar = ({ 
   query, 
   setQuery, 
   placeholder = 'Search passwords...' 

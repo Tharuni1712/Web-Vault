@@ -10,16 +10,16 @@ import { generatePassword, calculatePasswordStrength, getStrengthCategory } from
 import { Eye, EyeOff, RefreshCw, Copy, Check } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
 
-const PasswordGenerator: React.FC = () => {
-  const [password, setPassword] = useState<string>('');
-  const [passwordVisible, setPasswordVisible] = useState<boolean>(false);
-  const [length, setLength] = useState<number>(16);
-  const [includeUppercase, setIncludeUppercase] = useState<boolean>(true);
-  const [includeLowercase, setIncludeLowercase] = useState<boolean>(true);
-  const [includeNumbers, setIncludeNumbers] = useState<boolean>(true);
-  const [includeSymbols, setIncludeSymbols] = useState<boolean>(true);
-  const [strength, setStrength] = useState<number>(0);
-  const [copySuccess, setCopySuccess] = useState<boolean>(false);
+const PasswordGenerator = () => {
+  const [password, setPassword] = useState('');
+  const [passwordVisible, setPasswordVisible] = useState(false);
+  const [length, setLength] = useState(16);
+  const [includeUppercase, setIncludeUppercase] = useState(true);
+  const [includeLowercase, setIncludeLowercase] = useState(true);
+  const [includeNumbers, setIncludeNumbers] = useState(true);
+  const [includeSymbols, setIncludeSymbols] = useState(true);
+  const [strength, setStrength] = useState(0);
+  const [copySuccess, setCopySuccess] = useState(false);
   const { toast } = useToast();
 
   // Generate password on first render and when options change

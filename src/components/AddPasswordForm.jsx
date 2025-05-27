@@ -7,21 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Eye, EyeOff, Plus } from 'lucide-react';
 import { extractDomain } from '@/utils/passwordUtils';
 
-export interface PasswordEntry {
-  id: string;
-  website: string;
-  domain: string;
-  username: string;
-  password: string;
-  notes?: string;
-  createdAt: number;
-}
-
-interface AddPasswordFormProps {
-  onAdd: (entry: PasswordEntry) => void;
-}
-
-const AddPasswordForm: React.FC<AddPasswordFormProps> = ({ onAdd }) => {
+const AddPasswordForm = ({ onAdd }) => {
   const [open, setOpen] = useState(false);
   const [website, setWebsite] = useState('');
   const [username, setUsername] = useState('');
@@ -29,14 +15,14 @@ const AddPasswordForm: React.FC<AddPasswordFormProps> = ({ onAdd }) => {
   const [notes, setNotes] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     
     if (!website || !username || !password) {
       return;
     }
     
-    const newEntry: PasswordEntry = {
+    const newEntry = {
       id: Date.now().toString(),
       website,
       domain: extractDomain(website),

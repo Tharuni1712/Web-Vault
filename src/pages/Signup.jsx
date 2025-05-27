@@ -8,20 +8,29 @@ import { Shield, Eye, EyeOff } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useToast } from '@/components/ui/use-toast';
 
-const Login = () => {
+const Signup = () => {
   const [showPassword, setShowPassword] = React.useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
+  const [confirmPassword, setConfirmPassword] = React.useState('');
   const { toast } = useToast();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    // In a real app, you'd handle authentication here
     
-    // For demo, just show a toast
+    if (password !== confirmPassword) {
+      toast({
+        title: "Passwords don't match",
+        description: "Please make sure your passwords match.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     toast({
-      title: "Login Successful",
-      description: "Welcome back to SecurePass.",
+      title: "Account Created",
+      description: "Welcome to SecurePass! Your account has been created successfully.",
     });
   };
 
@@ -37,9 +46,9 @@ const Login = () => {
         
         <Card className="border-0 shadow-xl">
           <CardHeader className="space-y-1">
-            <CardTitle className="text-2xl text-center">Sign in</CardTitle>
+            <CardTitle className="text-2xl text-center">Create Account</CardTitle>
             <CardDescription className="text-center">
-              Enter your email and password to access your vault
+              Enter your details to create your secure password vault
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -56,17 +65,12 @@ const Login = () => {
                 />
               </div>
               <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <Label htmlFor="password">Password</Label>
-                  <Link to="/forgot-password" className="text-sm text-blue-600 hover:underline">
-                    Forgot password?
-                  </Link>
-                </div>
+                <Label htmlFor="password">Master Password</Label>
                 <div className="relative">
                   <Input 
                     id="password" 
                     type={showPassword ? 'text' : 'password'} 
-                    placeholder="••••••••"
+                    placeholder="Create a strong master password"
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
@@ -86,16 +90,45 @@ const Login = () => {
                   </Button>
                 </div>
               </div>
+              <div className="space-y-2">
+                <Label htmlFor="confirm-password">Confirm Master Password</Label>
+                <div className="relative">
+                  <Input 
+                    id="confirm-password" 
+                    type={showConfirmPassword ? 'text' : 'password'} 
+                    placeholder="Confirm your master password"
+                    required
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                  />
+                  <Button 
+                    type="button"
+                    variant="ghost" 
+                    size="sm"
+                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  >
+                    {showConfirmPassword ? (
+                      <EyeOff className="h-4 w-4 text-gray-400" />
+                    ) : (
+                      <Eye className="h-4 w-4 text-gray-400" />
+                    )}
+                  </Button>
+                </div>
+              </div>
+              <div className="text-xs text-gray-500">
+                Your master password is the key to your vault. Make it strong and memorable - we can't recover it if you forget it.
+              </div>
               <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700">
-                Sign In
+                Create Account
               </Button>
             </form>
           </CardContent>
           <CardFooter className="flex flex-col">
             <div className="mt-2 text-center text-sm">
-              Don't have an account?{' '}
-              <Link to="/signup" className="text-blue-600 hover:underline font-medium">
-                Sign up
+              Already have an account?{' '}
+              <Link to="/login" className="text-blue-600 hover:underline font-medium">
+                Sign in
               </Link>
             </div>
           </CardFooter>
@@ -105,4 +138,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Signup;

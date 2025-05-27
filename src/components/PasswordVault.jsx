@@ -2,13 +2,13 @@
 import React, { useEffect, useState } from 'react';
 import SearchBar from './SearchBar';
 import PasswordEntry from './PasswordEntry';
-import AddPasswordForm, { PasswordEntry as PasswordEntryType } from './AddPasswordForm';
+import AddPasswordForm from './AddPasswordForm';
 import { useToast } from '@/components/ui/use-toast';
 import { Card, CardContent } from '@/components/ui/card';
 import { Lock } from 'lucide-react';
 
-const PasswordVault: React.FC = () => {
-  const [passwords, setPasswords] = useState<PasswordEntryType[]>([]);
+const PasswordVault = () => {
+  const [passwords, setPasswords] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const { toast } = useToast();
   
@@ -29,7 +29,7 @@ const PasswordVault: React.FC = () => {
     localStorage.setItem('passwordVault', JSON.stringify(passwords));
   }, [passwords]);
   
-  const handleAddPassword = (entry: PasswordEntryType) => {
+  const handleAddPassword = (entry) => {
     setPasswords((prev) => [entry, ...prev]);
     toast({
       title: "Password Added",
@@ -37,7 +37,7 @@ const PasswordVault: React.FC = () => {
     });
   };
   
-  const handleDeletePassword = (id: string) => {
+  const handleDeletePassword = (id) => {
     const passwordToDelete = passwords.find(p => p.id === id);
     setPasswords((prev) => prev.filter((entry) => entry.id !== id));
     toast({
@@ -46,7 +46,7 @@ const PasswordVault: React.FC = () => {
     });
   };
   
-  const handleUpdatePassword = (id: string, updatedEntry: Partial<PasswordEntryType>) => {
+  const handleUpdatePassword = (id, updatedEntry) => {
     setPasswords((prev) => 
       prev.map((entry) => 
         entry.id === id ? { ...entry, ...updatedEntry } : entry
