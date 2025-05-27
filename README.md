@@ -2,7 +2,7 @@
 This project is built with:
 
 - Vite
-- TypeScript
+- Javascript
 - React
 - shadcn-ui
 - Tailwind CSS
