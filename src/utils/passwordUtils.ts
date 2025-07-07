@@ -1,3 +1,4 @@
+
 import { 
   generateKeyPair, 
   homomorphicEncrypt, 
@@ -91,7 +92,7 @@ export async function copyToClipboard(text: string): Promise<boolean> {
   }
 }
 
-// Enhanced password storage with homomorphic encryption option
+// Enhanced password storage with homomorphic encryption
 export interface SecurePasswordEntry {
   id: string;
   website: string;
@@ -113,6 +114,7 @@ export function storePasswordWithHomomorphicEncryption(
   
   return {
     ...entry,
+    password: '', // Clear plaintext password for security
     encryptedPassword,
     isHomomorphicallyEncrypted: true,
   };

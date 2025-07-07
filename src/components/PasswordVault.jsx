@@ -3,16 +3,36 @@ import React, { useEffect, useState } from 'react';
 import SearchBar from './SearchBar';
 import PasswordEntry from './PasswordEntry';
 import AddPasswordForm from './AddPasswordForm';
-import HomomorphicDemo from './HomomorphicDemo';
 import { useToast } from '@/components/ui/use-toast';
 import { Card, CardContent } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Lock, Shield } from 'lucide-react';
+import { Lock } from 'lucide-react';
+import { generateKeyPair } from '@/utils/homomorphicEncryption';
+import { storePasswordWithHomomorphicEncryption, retrievePasswordWithHomomorphicDecryption } from '@/utils/passwordUtils';
 
 const PasswordVault = () => {
   const [passwords, setPasswords] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
+  const [keyPair, setKeyPair] = useState(null);
   const { toast } = useToast();
+  
+  // Generate or load encryption keys on mount
+  useEffect(() => {
+    const storedKeys = localStorage.getItem('encryptionKeys');
+    if (storedKeys) {
+      try {
+        setKeyPair(JSON.parse(storedKeys));
+      } catch (error) {
+        // Generate new keys if stored keys are corrupted
+        const newKeyPair = generateKeyPair();
+        setKeyPair(newKeyPair);
+        localStorage.setItem('encryptionKeys', JSON.stringify(newKeyPair));
+      }
+    } else {
+      const newKeyPair = generateKeyPair();
+      setKeyPair(newKeyPair);
+      localStorage.setItem('encryptionKeys', JSON.stringify(newKeyPair));
+    }
+  }, []);
   
   // Load passwords from localStorage on initial render
   useEffect(() => {
@@ -32,11 +52,22 @@ const PasswordVault = () => {
   }, [passwords]);
   
   const handleAddPassword = (entry) => {
-    setPasswords((prev) => [entry, ...prev]);
-    toast({
-      title: "Password Added",
-      description: `Password for ${entry.domain} has been saved.`,
-    });
+    if (keyPair) {
+      // Store password with homomorphic encryption
+      const encryptedEntry = storePasswordWithHomomorphicEncryption(entry, keyPair);
+      setPasswords((prev) => [encryptedEntry, ...prev]);
+      toast({
+        title: "Password Added",
+        description: `Password for ${entry.domain} has been saved with homomorphic encryption.`,
+      });
+    } else {
+      // Fallback without encryption if keys aren't ready
+      setPasswords((prev) => [entry, ...prev]);
+      toast({
+        title: "Password Added",
+        description: `Password for ${entry.domain} has been saved.`,
+      });
+    }
   };
   
   const handleDeletePassword = (id) => {
@@ -50,9 +81,20 @@ const PasswordVault = () => {
   
   const handleUpdatePassword = (id, updatedEntry) => {
     setPasswords((prev) => 
-      prev.map((entry) => 
-        entry.id === id ? { ...entry, ...updatedEntry } : entry
-      )
+      prev.map((entry) => {
+        if (entry.id === id) {
+          if (keyPair && updatedEntry.password) {
+            // Re-encrypt the updated password
+            const encryptedEntry = storePasswordWithHomomorphicEncryption({
+              ...entry,
+              ...updatedEntry
+            }, keyPair);
+            return encryptedEntry;
+          }
+          return { ...entry, ...updatedEntry };
+        }
+        return entry;
+      })
     );
     toast({
       title: "Password Updated",
@@ -60,8 +102,19 @@ const PasswordVault = () => {
     });
   };
   
+  // Decrypt passwords for display and search
+  const decryptedPasswords = passwords.map(entry => {
+    if (entry.isHomomorphicallyEncrypted && keyPair) {
+      return {
+        ...entry,
+        password: retrievePasswordWithHomomorphicDecryption(entry, keyPair)
+      };
+    }
+    return entry;
+  });
+  
   // Filter passwords based on search query
-  const filteredPasswords = passwords.filter((entry) => {
+  const filteredPasswords = decryptedPasswords.filter((entry) => {
     const query = searchQuery.toLowerCase();
     return (
       entry.website.toLowerCase().includes(query) ||
@@ -80,73 +133,54 @@ const PasswordVault = () => {
         </div>
       </div>
 
-      <Tabs defaultValue="vault" className="w-full">
-        <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="vault" className="flex items-center gap-2">
-            <Lock className="h-4 w-4" />
-            Password Vault
-          </TabsTrigger>
-          <TabsTrigger value="encryption" className="flex items-center gap-2">
-            <Shield className="h-4 w-4" />
-            Homomorphic Encryption
-          </TabsTrigger>
-        </TabsList>
-        
-        <TabsContent value="vault" className="space-y-4">
-          <div className="flex flex-col md:flex-row gap-4">
-            <div className="w-full md:w-3/4">
-              <SearchBar 
-                query={searchQuery}
-                setQuery={setSearchQuery}
-                placeholder="Search website, username, or notes..."
-              />
-            </div>
-            <div className="w-full md:w-1/4">
-              <AddPasswordForm onAdd={handleAddPassword} />
-            </div>
-          </div>
+      <div className="flex flex-col md:flex-row gap-4">
+        <div className="w-full md:w-3/4">
+          <SearchBar 
+            query={searchQuery}
+            setQuery={setSearchQuery}
+            placeholder="Search website, username, or notes..."
+          />
+        </div>
+        <div className="w-full md:w-1/4">
+          <AddPasswordForm onAdd={handleAddPassword} />
+        </div>
+      </div>
 
-          <div className="mt-6">
-            {filteredPasswords.length > 0 ? (
-              filteredPasswords.map((entry) => (
-                <PasswordEntry
-                  key={entry.id}
-                  entry={entry}
-                  onDelete={handleDeletePassword}
-                  onUpdate={handleUpdatePassword}
-                />
-              ))
-            ) : (
-              <Card className="text-center py-12">
-                <CardContent>
-                  <div className="flex justify-center mb-4">
-                    <Lock className="h-12 w-12 text-gray-300" />
-                  </div>
-                  {searchQuery ? (
-                    <>
-                      <h3 className="text-lg font-medium">No matching passwords found</h3>
-                      <p className="text-sm text-gray-500 mt-1">
-                        Try adjusting your search terms
-                      </p>
-                    </>
-                  ) : (
-                    <>
-                      <h3 className="text-lg font-medium">No passwords yet</h3>
-                      <p className="text-sm text-gray-500 mt-1">
-                        Add your first password to get started
-                      </p>
-                    </>
-                  )}
-                </CardContent>
-              </Card>
-            )}
-          </div>
-        </TabsContent>
-        
-        <TabsContent value="encryption">
-          <HomomorphicDemo />
-        </TabsContent>
-      </Tabs>
+      <div className="mt-6">
+        {filteredPasswords.length > 0 ? (
+          filteredPasswords.map((entry) => (
+            <PasswordEntry
+              key={entry.id}
+              entry={entry}
+              onDelete={handleDeletePassword}
+              onUpdate={handleUpdatePassword}
+            />
+          ))
+        ) : (
+          <Card className="text-center py-12">
+            <CardContent>
+              <div className="flex justify-center mb-4">
+                <Lock className="h-12 w-12 text-gray-300" />
+              </div>
+              {searchQuery ? (
+                <>
+                  <h3 className="text-lg font-medium">No matching passwords found</h3>
+                  <p className="text-sm text-gray-500 mt-1">
+                    Try adjusting your search terms
+                  </p>
+                </>
+              ) : (
+                <>
+                  <h3 className="text-lg font-medium">No passwords yet</h3>
+                  <p className="text-sm text-gray-500 mt-1">
+                    Add your first password to get started
+                  </p>
+                </>
+              )}
+            </CardContent>
+          </Card>
+        )}
+      </div>
     </div>
   );
 };
