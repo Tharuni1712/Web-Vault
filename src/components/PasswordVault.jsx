@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import SearchBar from './SearchBar';
 import PasswordEntry from './PasswordEntry';
@@ -7,7 +6,7 @@ import { useToast } from '@/components/ui/use-toast';
 import { Card, CardContent } from '@/components/ui/card';
 import { Lock } from 'lucide-react';
 import { generateKeyPair } from '@/utils/homomorphicEncryption';
-import { storePasswordWithHomomorphicEncryption, retrievePasswordWithHomomorphicDecryption } from '@/utils/passwordUtils';
+import { storePasswordWithHomomorphicEncryption, retrievePasswordWithHomomorphicDecryption } from '@/utils/passwordUtils.ts';
 
 const PasswordVault = () => {
   const [passwords, setPasswords] = useState([]);
