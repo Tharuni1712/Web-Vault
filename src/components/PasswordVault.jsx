@@ -3,9 +3,11 @@ import React, { useEffect, useState } from 'react';
 import SearchBar from './SearchBar';
 import PasswordEntry from './PasswordEntry';
 import AddPasswordForm from './AddPasswordForm';
+import HomomorphicDemo from './HomomorphicDemo';
 import { useToast } from '@/components/ui/use-toast';
 import { Card, CardContent } from '@/components/ui/card';
-import { Lock } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Lock, Shield } from 'lucide-react';
 
 const PasswordVault = () => {
   const [passwords, setPasswords] = useState([]);
@@ -78,56 +80,73 @@ const PasswordVault = () => {
         </div>
       </div>
 
-      <div className="space-y-4">
-        <div className="flex flex-col md:flex-row gap-4">
-          <div className="w-full md:w-3/4">
-            <SearchBar 
-              query={searchQuery}
-              setQuery={setSearchQuery}
-              placeholder="Search website, username, or notes..."
-            />
-          </div>
-          <div className="w-full md:w-1/4">
-            <AddPasswordForm onAdd={handleAddPassword} />
-          </div>
-        </div>
-
-        <div className="mt-6">
-          {filteredPasswords.length > 0 ? (
-            filteredPasswords.map((entry) => (
-              <PasswordEntry
-                key={entry.id}
-                entry={entry}
-                onDelete={handleDeletePassword}
-                onUpdate={handleUpdatePassword}
+      <Tabs defaultValue="vault" className="w-full">
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="vault" className="flex items-center gap-2">
+            <Lock className="h-4 w-4" />
+            Password Vault
+          </TabsTrigger>
+          <TabsTrigger value="encryption" className="flex items-center gap-2">
+            <Shield className="h-4 w-4" />
+            Homomorphic Encryption
+          </TabsTrigger>
+        </TabsList>
+        
+        <TabsContent value="vault" className="space-y-4">
+          <div className="flex flex-col md:flex-row gap-4">
+            <div className="w-full md:w-3/4">
+              <SearchBar 
+                query={searchQuery}
+                setQuery={setSearchQuery}
+                placeholder="Search website, username, or notes..."
               />
-            ))
-          ) : (
-            <Card className="text-center py-12">
-              <CardContent>
-                <div className="flex justify-center mb-4">
-                  <Lock className="h-12 w-12 text-gray-300" />
-                </div>
-                {searchQuery ? (
-                  <>
-                    <h3 className="text-lg font-medium">No matching passwords found</h3>
-                    <p className="text-sm text-gray-500 mt-1">
-                      Try adjusting your search terms
-                    </p>
-                  </>
-                ) : (
-                  <>
-                    <h3 className="text-lg font-medium">No passwords yet</h3>
-                    <p className="text-sm text-gray-500 mt-1">
-                      Add your first password to get started
-                    </p>
-                  </>
-                )}
-              </CardContent>
-            </Card>
-          )}
-        </div>
-      </div>
+            </div>
+            <div className="w-full md:w-1/4">
+              <AddPasswordForm onAdd={handleAddPassword} />
+            </div>
+          </div>
+
+          <div className="mt-6">
+            {filteredPasswords.length > 0 ? (
+              filteredPasswords.map((entry) => (
+                <PasswordEntry
+                  key={entry.id}
+                  entry={entry}
+                  onDelete={handleDeletePassword}
+                  onUpdate={handleUpdatePassword}
+                />
+              ))
+            ) : (
+              <Card className="text-center py-12">
+                <CardContent>
+                  <div className="flex justify-center mb-4">
+                    <Lock className="h-12 w-12 text-gray-300" />
+                  </div>
+                  {searchQuery ? (
+                    <>
+                      <h3 className="text-lg font-medium">No matching passwords found</h3>
+                      <p className="text-sm text-gray-500 mt-1">
+                        Try adjusting your search terms
+                      </p>
+                    </>
+                  ) : (
+                    <>
+                      <h3 className="text-lg font-medium">No passwords yet</h3>
+                      <p className="text-sm text-gray-500 mt-1">
+                        Add your first password to get started
+                      </p>
+                    </>
+                  )}
+                </CardContent>
+              </Card>
+            )}
+          </div>
+        </TabsContent>
+        
+        <TabsContent value="encryption">
+          <HomomorphicDemo />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };

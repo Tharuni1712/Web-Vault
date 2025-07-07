@@ -1,3 +1,10 @@
+import { 
+  generateKeyPair, 
+  homomorphicEncrypt, 
+  homomorphicDecrypt,
+  type KeyPair,
+  type EncryptedData 
+} from './homomorphicEncryption';
 
 // Generate a random password based on options
 export function generatePassword(
@@ -82,4 +89,42 @@ export async function copyToClipboard(text: string): Promise<boolean> {
     console.error('Failed to copy:', error);
     return false;
   }
+}
+
+// Enhanced password storage with homomorphic encryption option
+export interface SecurePasswordEntry {
+  id: string;
+  website: string;
+  domain: string;
+  username: string;
+  password: string;
+  encryptedPassword?: EncryptedData;
+  notes?: string;
+  createdAt: number;
+  isHomomorphicallyEncrypted?: boolean;
+}
+
+// Store password with homomorphic encryption
+export function storePasswordWithHomomorphicEncryption(
+  entry: Omit<SecurePasswordEntry, 'encryptedPassword' | 'isHomomorphicallyEncrypted'>,
+  keyPair: KeyPair
+): SecurePasswordEntry {
+  const encryptedPassword = homomorphicEncrypt(entry.password, keyPair);
+  
+  return {
+    ...entry,
+    encryptedPassword,
+    isHomomorphicallyEncrypted: true,
+  };
+}
+
+// Retrieve password with homomorphic decryption
+export function retrievePasswordWithHomomorphicDecryption(
+  entry: SecurePasswordEntry,
+  keyPair: KeyPair
+): string {
+  if (entry.isHomomorphicallyEncrypted && entry.encryptedPassword) {
+    return homomorphicDecrypt(entry.encryptedPassword, keyPair);
+  }
+  return entry.password;
 }
