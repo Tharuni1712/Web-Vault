@@ -32,7 +32,24 @@ const PasswordVault = () => {
       localStorage.setItem('encryptionKeys', JSON.stringify(newKeyPair));
     }
   }, []);
-  
+  // ✅ Function to send encrypted data to backend (MongoDB)
+const saveToBackend = async (encryptedEntry) => {
+  try {
+    console.log("Sending to backend:", JSON.stringify(encryptedEntry, null, 2));
+    const response = await fetch("http://localhost:5000/save-password", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(encryptedEntry)
+    });
+
+    const data = await response.json();
+    console.log("Saved to backend:", data);
+  } catch (err) {
+    console.error("Failed to save to backend", err);
+  }
+};
   // Load passwords from localStorage on initial render
   useEffect(() => {
     const storedPasswords = localStorage.getItem('passwordVault');
@@ -51,23 +68,22 @@ const PasswordVault = () => {
   }, [passwords]);
   
   const handleAddPassword = (entry) => {
-    if (keyPair) {
-      // Store password with homomorphic encryption
-      const encryptedEntry = storePasswordWithHomomorphicEncryption(entry, keyPair);
-      setPasswords((prev) => [encryptedEntry, ...prev]);
-      toast({
-        title: "Password Added",
-        description: `Password for ${entry.domain} has been saved with homomorphic encryption.`,
-      });
-    } else {
-      // Fallback without encryption if keys aren't ready
-      setPasswords((prev) => [entry, ...prev]);
-      toast({
-        title: "Password Added",
-        description: `Password for ${entry.domain} has been saved.`,
-      });
-    }
-  };
+
+  setPasswords((prev) => [entry, ...prev]);
+
+
+  saveToBackend({
+    website: entry.domain,   
+    username: entry.username,
+    password: entry.password
+  });
+
+  toast({
+    title: "Password Added",
+    description: `Password for ${entry.domain} has been sent to backend for encryption.`,
+  });
+};
+
   
   const handleDeletePassword = (id) => {
     const passwordToDelete = passwords.find(p => p.id === id);
