@@ -22,15 +22,16 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/vault" element={<VaultPage />} />
-          <Route path="/how-it-works" element={<HowItWorks />} />
-          <Route path="/features" element={<Features />} />
-          <Route path="/resources" element={<Resources />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+  <Route path="/" element={<Index />} />
+  <Route path="/vault" element={<VaultPage />} /> {/* This is your main page */}
+  <Route path="/how-it-works" element={<HowItWorks />} />
+  <Route path="/features" element={<Features />} />
+  <Route path="/resources" element={<Resources />} />
+  <Route path="/login" element={<Login />} />
+  <Route path="/signup" element={<Signup />} />
+  <Route path="*" element={<NotFound />} />
+</Routes>
+
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>

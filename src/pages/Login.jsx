@@ -1,11 +1,17 @@
-
 import React from 'react';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle
+} from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Shield, Eye, EyeOff } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom'; // ✅ Added useNavigate
 import { useToast } from '@/components/ui/use-toast';
 
 const Login = () => {
@@ -13,14 +19,29 @@ const Login = () => {
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
   const { toast } = useToast();
+  const navigate = useNavigate(); // ✅ Initialize navigate
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    
+
+    if (!email || !password) {
+      toast({
+        title: 'Missing Fields',
+        description: 'Please enter both email and password.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
     toast({
-      title: "Login Successful",
-      description: "Welcome back to SecurePass.",
+      title: 'Login Successful',
+      description: 'Welcome back to SecurePass.',
     });
+
+    // ✅ Redirect to /vault after short delay
+    setTimeout(() => {
+      navigate('/vault');
+    }, 1000);
   };
 
   return (
@@ -32,7 +53,7 @@ const Login = () => {
             <h1 className="ml-2 text-3xl font-bold text-gray-900">SecurePass</h1>
           </Link>
         </div>
-        
+
         <Card className="border-0 shadow-xl">
           <CardHeader className="space-y-1">
             <CardTitle className="text-2xl text-center">Sign in</CardTitle>
@@ -44,9 +65,9 @@ const Login = () => {
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
-                <Input 
-                  id="email" 
-                  type="email" 
+                <Input
+                  id="email"
+                  type="email"
                   placeholder="name@example.com"
                   required
                   value={email}
@@ -56,22 +77,25 @@ const Login = () => {
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <Label htmlFor="password">Password</Label>
-                  <Link to="/forgot-password" className="text-sm text-blue-600 hover:underline">
+                  <Link
+                    to="/forgot-password"
+                    className="text-sm text-blue-600 hover:underline"
+                  >
                     Forgot password?
                   </Link>
                 </div>
                 <div className="relative">
-                  <Input 
-                    id="password" 
-                    type={showPassword ? 'text' : 'password'} 
+                  <Input
+                    id="password"
+                    type={showPassword ? 'text' : 'password'}
                     placeholder="••••••••"
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                   />
-                  <Button 
+                  <Button
                     type="button"
-                    variant="ghost" 
+                    variant="ghost"
                     size="sm"
                     className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
                     onClick={() => setShowPassword(!showPassword)}
@@ -84,15 +108,21 @@ const Login = () => {
                   </Button>
                 </div>
               </div>
-              <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700">
+              <Button
+                type="submit"
+                className="w-full bg-blue-600 hover:bg-blue-700"
+              >
                 Sign In
               </Button>
             </form>
           </CardContent>
           <CardFooter className="flex flex-col">
             <div className="mt-2 text-center text-sm">
-              Don't have an account?{' '}
-              <Link to="/signup" className="text-blue-600 hover:underline font-medium">
+              Don&apos;t have an account?{' '}
+              <Link
+                to="/signup"
+                className="text-blue-600 hover:underline font-medium"
+              >
                 Sign up
               </Link>
             </div>
@@ -104,3 +134,4 @@ const Login = () => {
 };
 
 export default Login;
+
